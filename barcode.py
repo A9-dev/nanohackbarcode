@@ -1,7 +1,18 @@
 import cv2
 from pyzbar import pyzbar
+import requests
+import json
 
 last_barcode = ""
+
+
+def send_data(obj):
+    x = requests.post(
+        "https://roomify.electrokid.co.uk/api/barcode",
+        headers={"key": "roomify123", "roomid": "1"},
+        data=obj,
+    )
+    print(x.text)
 
 
 def decode(image):
@@ -12,6 +23,7 @@ def decode(image):
         if obj.data != last_barcode:
             last_barcode = obj.data
             print(last_barcode)
+            send_data(json.dumps({"barcode": last_barcode.decode("utf-8")}))
     return image
 
 
